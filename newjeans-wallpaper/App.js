@@ -1,9 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Pressable, Image, FlatList } from 'react-native';
-import { useState, useEffect } from 'react';
-import { Button } from 'react-native-web';
+import { StyleSheet, Text, View, TouchableOpacity, Image, FlatList, Alert } from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import * as FileSystem from 'expo-file-system';
+import * as MediaLibrary from 'expo-media-library';
+import { AdMobBanner } from 'expo-ads-admob';
+
 
 const Newjeansurl = 'https://pouriaafshari.github.io/NewJeans-image/newjeans.json';
 let newjeansWallpaper = [];
@@ -91,11 +93,11 @@ async function GetHyein()
 
     if (Response.ok)
     {
-        for (let i = 0; i < Data.length; i++) 
-        {
-          let dataBlock = {id: Data[i].id, url: Data[i].url};
-          hyeinWallpaper[i] = dataBlock;
-        } 
+      for (let i = 0; i < Data.length; i++) 
+      {
+        let dataBlock = {id: Data[i].id, url: Data[i].url};
+        hyeinWallpaper[i] = dataBlock;
+      } 
     }
 }
 GetHyein();
@@ -122,7 +124,7 @@ GetHaerin();
 const Stack = createNativeStackNavigator();
 
 function Menu({ navigation })
-{
+{ 
   return(
     <View style={styles.container}>
 
@@ -131,41 +133,55 @@ function Menu({ navigation })
         <Text style={styles.headerText}></Text>
       </View>
 
-      <Pressable onPress={() => {navigation.navigate('newjeans')}} style={styles.button}>
+      <TouchableOpacity onPress={() => {navigation.navigate('newjeans')}} style={styles.button}>
         <Image source={require('./assets/allBG.webp')} style={styles.img}></Image>
         <Text style={styles.buttonText}>NewJeans</Text>
-      </Pressable>
-      <Pressable onPress={() => {navigation.navigate('danielle')}} style={styles.button}>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => {navigation.navigate('danielle')}} style={styles.button}>
         <Image source={require('./assets/danielleBG.jpg')} style={styles.img}></Image>
         <Text style={styles.buttonText}>Danielle</Text>
-      </Pressable>
-      <Pressable onPress={() => {navigation.navigate('hanni')}} style={styles.button}>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => {navigation.navigate('hanni')}} style={styles.button}>
         <Image source={require('./assets/hanniBG.jpg')} style={styles.img}></Image>
         <Text style={styles.buttonText}>Hanni</Text>
-      </Pressable>
-      <Pressable onPress={() => {navigation.navigate('minji')}} style={styles.button}>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => {navigation.navigate('minji')}} style={styles.button}>
         <Image source={require('./assets/minjiBG.jpg')} style={styles.img}></Image>
         <Text style={styles.buttonText}>Minji</Text>
-      </Pressable>
-      <Pressable onPress={() => {navigation.navigate('hyein')}} style={styles.button}>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => {navigation.navigate('hyein')}} style={styles.button}>
         <Image source={require('./assets/hyeinBG.jpg')} style={styles.img}></Image>
         <Text style={styles.buttonText}>Hyein</Text>
-      </Pressable>
-      <Pressable onPress={() => {navigation.navigate('haerin')}} style={styles.button}>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => {navigation.navigate('haerin')}} style={styles.button}>
         <Image source={require('./assets/haerinBG.jpg')} style={styles.img}></Image>
         <Text style={styles.buttonText}>Haerin</Text>
-      </Pressable>
+      </TouchableOpacity>
   
+      <AdMobBanner
+          style={styles.bottomBanner}
+          bannerSize="fullBanner"
+          adUnitID="ca-app-pub-3940256099942544/6300978111"
+          testDeviceID="EMULATOR"
+        />
+
     </View>
   )
 }
 
-const Minji = () =>
+const Minji = ({ navigation }) =>
 {
   const renderImageItem = ({ item }) => {
+    const openImage = () =>
+    {
+      navigation.navigate('FullSizeImage', { imageUri: item.url });
+    }
+  
     return (
       <View style={styles.imageContainer}>
-        <Image src={item.url} style={styles.image} />
+        <TouchableOpacity onPress={openImage}>
+          <Image src={item.url} style={styles.image} />
+        </TouchableOpacity>
       </View>
     );
   };
@@ -182,12 +198,19 @@ const Minji = () =>
   );
 }
 
-const Hyein = () =>
+const Hyein = ({ navigation }) =>
 {
   const renderImageItem = ({ item }) => {
+    const openImage = () =>
+    {
+      navigation.navigate('FullSizeImage', { imageUri: item.url });
+    }
+  
     return (
       <View style={styles.imageContainer}>
-        <Image src={item.url} style={styles.image} />
+        <TouchableOpacity onPress={openImage}>
+          <Image src={item.url} style={styles.image} />
+        </TouchableOpacity>
       </View>
     );
   };
@@ -204,12 +227,19 @@ const Hyein = () =>
   );
 }
 
-const NewJeans = () =>
+const NewJeans = ({ navigation }) =>
 {
   const renderImageItem = ({ item }) => {
+    const openImage = () =>
+    {
+      navigation.navigate('FullSizeImage', { imageUri: item.url });
+    }
+  
     return (
       <View style={styles.imageContainer}>
-        <Image src={item.url} style={styles.image} />
+        <TouchableOpacity onPress={openImage}>
+          <Image src={item.url} style={styles.image} />
+        </TouchableOpacity>
       </View>
     );
   };
@@ -226,12 +256,19 @@ const NewJeans = () =>
   );
 }
 
-const Danielle = () =>
+const Danielle = ({ navigation }) =>
 {
   const renderImageItem = ({ item }) => {
+    const openImage = () =>
+    {
+      navigation.navigate('FullSizeImage', { imageUri: item.url });
+    }
+  
     return (
       <View style={styles.imageContainer}>
-        <Image src={item.url} style={styles.image} />
+        <TouchableOpacity onPress={openImage}>
+          <Image src={item.url} style={styles.image} />
+        </TouchableOpacity>
       </View>
     );
   };
@@ -248,12 +285,19 @@ const Danielle = () =>
   );
 }
 
-const Hanni = () =>
+const Hanni = ({ navigation }) =>
 {
   const renderImageItem = ({ item }) => {
+    const openImage = () =>
+    {
+      navigation.navigate('FullSizeImage', { imageUri: item.url });
+    }
+  
     return (
       <View style={styles.imageContainer}>
-        <Image src={item.url} style={styles.image} />
+        <TouchableOpacity onPress={openImage}>
+          <Image src={item.url} style={styles.image} />
+        </TouchableOpacity>
       </View>
     );
   };
@@ -270,12 +314,19 @@ const Hanni = () =>
   );
 }
 
-const Haerin = () =>
+const Haerin = ({ navigation }) =>
 {
   const renderImageItem = ({ item }) => {
+    const openImage = () =>
+    {
+      navigation.navigate('FullSizeImage', { imageUri: item.url });
+    }
+  
     return (
       <View style={styles.imageContainer}>
-        <Image src={item.url} style={styles.image} />
+        <TouchableOpacity onPress={openImage}>
+          <Image src={item.url} style={styles.image} />
+        </TouchableOpacity>
       </View>
     );
   };
@@ -292,7 +343,39 @@ const Haerin = () =>
   );
 }
 
+const FullSizeImageScreen = ({ route }) => {
+  const { imageUri } = route.params;
+
+  const saveToGallery = async () => {
+    imageUU = imageUri;
+    const { uri: imageII } = await FileSystem.downloadAsync(
+      imageUU,
+      FileSystem.documentDirectory + 'image.jpg'
+    );
+    await MediaLibrary.saveToLibraryAsync(imageII);
+    Alert.alert("Image saved successfully!");
+    console.log('Image saved successfully!');
+  }
+
+  return (
+    <View>
+      <Image source={{ uri: imageUri }} style={{ width: 'auto', height: '100%' }} />
+      <View style={styles.container2}>
+        <TouchableOpacity style={styles.buttonContainer2} onPress={ saveToGallery }>
+          <Text style={styles.buttonText2}>Ddddownload</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
 export default function App() {
+
+  const [status, requestPermission] = MediaLibrary.usePermissions();
+
+  if (status === null) {
+    requestPermission();
+  }
 
   return (
     <NavigationContainer>
@@ -304,6 +387,7 @@ export default function App() {
         <Stack.Screen name='minji' component={ Minji } />
         <Stack.Screen name='hyein' component={ Hyein } />
         <Stack.Screen name='haerin' component={ Haerin } />
+        <Stack.Screen name="FullSizeImage" component={FullSizeImageScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -357,4 +441,28 @@ const styles = StyleSheet.create({
     height: 290,
     borderRadius: 5,
   },
+  container2: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    paddingBottom: 20,
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+  },
+  buttonContainer2: {
+    backgroundColor: 'green',
+    borderRadius: 10,
+    padding: 10,
+    alignItems: 'center',
+  },
+  buttonText2: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  bottomBanner: {
+    position: "absolute",
+    bottom: 0
+  }
 });
