@@ -153,7 +153,7 @@ function Menu({ navigation })
       </TouchableOpacity>
   
       <BannerAd
-        unitId={TestIds.BANNER}
+        unitId={"ca-app-pub-4916084825755749/7287021860"}
         size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
         requestOptions={{
           requestNonPersonalizedAdsOnly: true,
@@ -351,6 +351,7 @@ const FullSizeImageScreen = ({ route }) => {
         CameraRoll.save(res.data, 'photo')
           .then(res => console.log(res))
           .catch(err => console.log(err))
+        Alert.alert("Download success.")
       })
       .catch(error => console.log(error));
   };
@@ -446,6 +447,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
     borderRadius: 10,
     padding: 10,
+    paddingLeft: 20,
+    paddingRight: 20,
     alignItems: 'center',
   },
   buttonText2: {
