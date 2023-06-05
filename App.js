@@ -1,10 +1,9 @@
-import { StatusBar } from 'expo-status-bar';
+import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
 import { StyleSheet, Text, View, TouchableOpacity, Image, FlatList, Alert } from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import * as FileSystem from 'expo-file-system';
-import * as MediaLibrary from 'expo-media-library';
-import { AdMobBanner } from 'expo-ads-admob';
+import { CameraRoll } from "@react-native-camera-roll/camera-roll";
+import RNFetchBlob from 'rn-fetch-blob';
 
 
 const Newjeansurl = 'https://pouriaafshari.github.io/NewJeans-image/newjeans.json';
@@ -128,11 +127,6 @@ function Menu({ navigation })
   return(
     <View style={styles.container}>
 
-      <StatusBar style="dark" />
-      <View style={styles.header}>
-        <Text style={styles.headerText}></Text>
-      </View>
-
       <TouchableOpacity onPress={() => {navigation.navigate('newjeans')}} style={styles.button}>
         <Image source={require('./assets/allBG.webp')} style={styles.img}></Image>
         <Text style={styles.buttonText}>NewJeans</Text>
@@ -158,12 +152,13 @@ function Menu({ navigation })
         <Text style={styles.buttonText}>Haerin</Text>
       </TouchableOpacity>
   
-      <AdMobBanner
-          style={styles.bottomBanner}
-          bannerSize="fullBanner"
-          adUnitID="ca-app-pub-3940256099942544/6300978111"
-          testDeviceID="EMULATOR"
-        />
+      <BannerAd
+        unitId={TestIds.BANNER}
+        size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+        requestOptions={{
+          requestNonPersonalizedAdsOnly: true,
+        }}
+      />
 
     </View>
   )
@@ -180,7 +175,7 @@ const Minji = ({ navigation }) =>
     return (
       <View style={styles.imageContainer}>
         <TouchableOpacity onPress={openImage}>
-          <Image src={item.url} style={styles.image} />
+          <Image source={{ uri: item.url }} style={styles.image} />
         </TouchableOpacity>
       </View>
     );
@@ -209,7 +204,7 @@ const Hyein = ({ navigation }) =>
     return (
       <View style={styles.imageContainer}>
         <TouchableOpacity onPress={openImage}>
-          <Image src={item.url} style={styles.image} />
+          <Image source={{ uri: item.url }} style={styles.image} />
         </TouchableOpacity>
       </View>
     );
@@ -238,7 +233,7 @@ const NewJeans = ({ navigation }) =>
     return (
       <View style={styles.imageContainer}>
         <TouchableOpacity onPress={openImage}>
-          <Image src={item.url} style={styles.image} />
+          <Image source={{ uri: item.url }} style={styles.image} />
         </TouchableOpacity>
       </View>
     );
@@ -267,7 +262,7 @@ const Danielle = ({ navigation }) =>
     return (
       <View style={styles.imageContainer}>
         <TouchableOpacity onPress={openImage}>
-          <Image src={item.url} style={styles.image} />
+          <Image source={{ uri: item.url }} style={styles.image} />
         </TouchableOpacity>
       </View>
     );
@@ -296,7 +291,7 @@ const Hanni = ({ navigation }) =>
     return (
       <View style={styles.imageContainer}>
         <TouchableOpacity onPress={openImage}>
-          <Image src={item.url} style={styles.image} />
+          <Image source={{ uri: item.url }} style={styles.image} />
         </TouchableOpacity>
       </View>
     );
@@ -325,7 +320,7 @@ const Haerin = ({ navigation }) =>
     return (
       <View style={styles.imageContainer}>
         <TouchableOpacity onPress={openImage}>
-          <Image src={item.url} style={styles.image} />
+          <Image source={{ uri: item.url }} style={styles.image} />
         </TouchableOpacity>
       </View>
     );
@@ -346,23 +341,26 @@ const Haerin = ({ navigation }) =>
 const FullSizeImageScreen = ({ route }) => {
   const { imageUri } = route.params;
 
-  const saveToGallery = async () => {
-    imageUU = imageUri;
-    const { uri: imageII } = await FileSystem.downloadAsync(
-      imageUU,
-      FileSystem.documentDirectory + 'image.jpg'
-    );
-    await MediaLibrary.saveToLibraryAsync(imageII);
-    Alert.alert("Image saved successfully!");
-    console.log('Image saved successfully!');
-  }
+  const handleDownload = async () => {
+    RNFetchBlob.config({
+      fileCache: true,
+      appendExt: 'jpg',
+    })
+      .fetch('GET', imageUri)
+      .then(res => {
+        CameraRoll.save(res.data, 'photo')
+          .then(res => console.log(res))
+          .catch(err => console.log(err))
+      })
+      .catch(error => console.log(error));
+  };
 
   return (
     <View>
       <Image source={{ uri: imageUri }} style={{ width: 'auto', height: '100%' }} />
       <View style={styles.container2}>
-        <TouchableOpacity style={styles.buttonContainer2} onPress={ saveToGallery }>
-          <Text style={styles.buttonText2}>Ddddownload</Text>
+        <TouchableOpacity style={styles.buttonContainer2} onPress={ handleDownload }>
+          <Text style={styles.buttonText2}>Download</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -370,12 +368,6 @@ const FullSizeImageScreen = ({ route }) => {
 };
 
 export default function App() {
-
-  const [status, requestPermission] = MediaLibrary.usePermissions();
-
-  if (status === null) {
-    requestPermission();
-  }
 
   return (
     <NavigationContainer>
